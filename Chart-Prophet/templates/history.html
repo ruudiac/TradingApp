@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading History - Trading Chart Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Trading History</h1>
+            <p class="subtitle">Track your trades and analyze performance</p>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">Analyze Chart</a>
+                <a href="/history" class="nav-link active">Trade History</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-label">Total Trades</span>
+                        <span class="stat-value" id="totalTrades">0</span>
+                    </div>
+                    <div class="stat-card win">
+                        <span class="stat-label">Winning Trades</span>
+                        <span class="stat-value" id="winningTrades">0</span>
+                    </div>
+                    <div class="stat-card loss">
+                        <span class="stat-label">Losing Trades</span>
+                        <span class="stat-value" id="losingTrades">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Win Rate</span>
+                        <span class="stat-value" id="winRate">0%</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="filters-section">
+                <h3>Filters</h3>
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    <div class="filter-group">
+                        <label for="endDate">End Date</label>
+                        <input type="date" id="endDate">
+                    </div>
+                    <div class="filter-group">
+                        <label for="indicatorFilter">Indicator Type</label>
+                        <select id="indicatorFilter">
+                            <option value="all">All Indicators</option>
+                            <option value="RSI">RSI</option>
+                            <option value="MACD">MACD</option>
+                            <option value="Fibonacci">Fibonacci</option>
+                            <option value="Combined">Combined</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="outcomeFilter">Outcome</label>
+                        <select id="outcomeFilter">
+                            <option value="all">All Outcomes</option>
+                            <option value="win">Wins</option>
+                            <option value="loss">Losses</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                    <div class="filter-group filter-actions">
+                        <button class="btn btn-primary" id="applyFilters">Apply Filters</button>
+                        <button class="btn btn-secondary" id="clearFilters">Clear</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="charts-section">
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Performance Over Time</h3>
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Win/Loss Distribution</h3>
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section class="trades-section">
+                <div class="trades-header">
+                    <h3>Trade History</h3>
+                    <button class="btn btn-primary" id="addTradeBtn">Add Trade Manually</button>
+                </div>
+                <div class="trades-table-container">
+                    <table class="trades-table" id="tradesTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Symbol</th>
+                                <th>Recommendation</th>
+                                <th>Indicator</th>
+                                <th>Outcome</th>
+                                <th>P/L</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tradesBody">
+                        </tbody>
+                    </table>
+                    <p class="empty-message" id="emptyMessage" style="display: none;">No trades recorded yet. Start analyzing charts to build your history!</p>
+                </div>
+            </section>
+        </main>
+
+        <div class="modal" id="tradeModal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Add Trade</h3>
+                    <button class="modal-close" id="closeModal">&times;</button>
+                </div>
+                <form id="tradeForm">
+                    <input type="hidden" id="tradeId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="symbol">Symbol</label>
+                            <input type="text" id="symbol" placeholder="e.g., AAPL, BTC">
+                        </div>
+                        <div class="form-group">
+                            <label for="recommendation">Recommendation</label>
+                            <select id="recommendation">
+                                <option value="BUY">BUY</option>
+                                <option value="SELL">SELL</option>
+                                <option value="HOLD">HOLD</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="indicatorType">Primary Indicator</label>
+                            <select id="indicatorType">
+                                <option value="Combined">Combined</option>
+                                <option value="RSI">RSI</option>
+                                <option value="MACD">MACD</option>
+                                <option value="Fibonacci">Fibonacci</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="outcome">Outcome</label>
+                            <select id="outcome">
+                                <option value="pending">Pending</option>
+                                <option value="win">Win</option>
+                                <option value="loss">Loss</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="entryPrice">Entry Price</label>
+                            <input type="number" id="entryPrice" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="exitPrice">Exit Price</label>
+                            <input type="number" id="exitPrice" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="profitLoss">Profit/Loss</label>
+                            <input type="number" id="profitLoss" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="notes">Notes</label>
+                            <textarea id="notes" rows="3" placeholder="Add notes about this trade..."></textarea>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Trade</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <footer>
+            <p class="disclaimer">Track your trading performance and improve your strategies over time.</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='history.js') }}"></script>
+</body>
+</html>

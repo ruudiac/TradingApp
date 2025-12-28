@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Chart Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Trading Chart Analyzer</h1>
+            <p class="subtitle">AI-Powered Technical Analysis with Fibonacci, RSI & MACD</p>
+            <nav class="nav-links">
+                <a href="/" class="nav-link active">Analyze Chart</a>
+                <a href="/history" class="nav-link">Trade History</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <h3>Upload Trading Chart</h3>
+                    <p>Drag and drop your chart image here, or click to browse</p>
+                    <p class="file-types">Supports: PNG, JPG, JPEG, GIF, WebP</p>
+                    <input type="file" id="fileInput" accept="image/*" hidden>
+                    <button class="btn btn-primary" id="browseBtn">Browse Files</button>
+                </div>
+                
+                <div class="preview-container" id="previewContainer" style="display: none;">
+                    <img id="previewImage" src="" alt="Chart Preview">
+                    <button class="btn btn-secondary" id="changeBtn">Change Image</button>
+                    <button class="btn btn-primary" id="analyzeBtn">Analyze Chart</button>
+                </div>
+            </section>
+
+            <section class="loading-section" id="loadingSection" style="display: none;">
+                <div class="loader"></div>
+                <p>Analyzing your chart with AI...</p>
+                <p class="loading-sub">This may take a few seconds</p>
+            </section>
+
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <h2>Analysis Results</h2>
+                
+                <div class="recommendation-card" id="recommendationCard">
+                    <div class="recommendation-header">
+                        <span class="recommendation-label">Recommendation</span>
+                        <span class="recommendation-value" id="recommendation">-</span>
+                    </div>
+                    <div class="recommendation-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Confidence</span>
+                            <span class="meta-value" id="confidence">-</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Trend</span>
+                            <span class="meta-value" id="trend">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analysis-grid">
+                    <div class="analysis-card">
+                        <h3>RSI Analysis</h3>
+                        <div class="indicator-badge" id="rsiBadge">-</div>
+                        <p id="rsiDescription">-</p>
+                    </div>
+                    
+                    <div class="analysis-card">
+                        <h3>MACD Analysis</h3>
+                        <div class="indicator-badge" id="macdBadge">-</div>
+                        <p id="macdDescription">-</p>
+                    </div>
+                </div>
+
+                <div class="levels-grid">
+                    <div class="levels-card">
+                        <h3>Support Levels</h3>
+                        <ul id="supportLevels"></ul>
+                    </div>
+                    
+                    <div class="levels-card">
+                        <h3>Resistance Levels</h3>
+                        <ul id="resistanceLevels"></ul>
+                    </div>
+                </div>
+
+                <div class="analysis-card fibonacci-card">
+                    <h3>Fibonacci Retracement Levels</h3>
+                    <div class="fib-levels" id="fibLevels"></div>
+                </div>
+
+                <div class="analysis-grid">
+                    <div class="analysis-card">
+                        <h3>Entry Points</h3>
+                        <ul id="entryPoints"></ul>
+                    </div>
+                    
+                    <div class="analysis-card">
+                        <h3>Exit Points</h3>
+                        <ul id="exitPoints"></ul>
+                    </div>
+                </div>
+
+                <div class="analysis-card">
+                    <h3>Key Observations</h3>
+                    <ul id="observations"></ul>
+                </div>
+
+                <div class="analysis-card risk-card">
+                    <h3>Risk Factors</h3>
+                    <ul id="riskFactors"></ul>
+                </div>
+
+                <div class="analysis-card summary-card">
+                    <h3>Summary</h3>
+                    <p id="summary">-</p>
+                </div>
+
+                <button class="btn btn-primary" id="newAnalysisBtn">Analyze Another Chart</button>
+            </section>
+        </main>
+
+        <footer>
+            <p class="disclaimer">Disclaimer: This analysis is for educational purposes only and should not be considered financial advice. Always do your own research before making trading decisions.</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
